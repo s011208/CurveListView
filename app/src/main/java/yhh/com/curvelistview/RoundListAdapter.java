@@ -51,22 +51,22 @@ public class RoundListAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = mInflater.inflate(R.layout.item, null);
-            holder.mBg = (RoundView) convertView.findViewById(R.id.bg);
-            holder.mFg = (RoundView) convertView.findViewById(R.id.fg);
+            holder.mBg = (ImageView) convertView.findViewById(R.id.bg);
+            holder.mFg = (ImageView) convertView.findViewById(R.id.fg);
+            holder.mRoundView = (RoundView) convertView;
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.mBg.setImageResource(R.drawable.bg);
         holder.mFg.setImageResource(R.drawable.fg);
-        holder.mBg.setTop(position == 0);
-        holder.mBg.setBottom(position == getCount() - 1);
-        holder.mFg.setTop(position == 0);
-        holder.mFg.setBottom(position == getCount() - 1);
+        holder.mRoundView.setTop(position == 0);
+        holder.mRoundView.setBottom(position == getCount() - 1);
         return convertView;
     }
 
     private static class ViewHolder {
-        RoundView mBg, mFg;
+        ImageView mBg, mFg;
+        RoundView mRoundView;
     }
 }
