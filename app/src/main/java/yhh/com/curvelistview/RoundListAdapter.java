@@ -1,7 +1,6 @@
 package yhh.com.curvelistview;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +52,7 @@ public class RoundListAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.item, null);
             holder.mBg = (ImageView) convertView.findViewById(R.id.bg);
             holder.mFg = (ImageView) convertView.findViewById(R.id.fg);
-            holder.mRoundView = (RoundView) convertView;
+            holder.mRoundView = (RoundedCornerLayout) convertView;
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -67,6 +66,6 @@ public class RoundListAdapter extends BaseAdapter {
 
     private static class ViewHolder {
         ImageView mBg, mFg;
-        RoundView mRoundView;
+        RoundedCornerLayout mRoundView;
     }
 }
