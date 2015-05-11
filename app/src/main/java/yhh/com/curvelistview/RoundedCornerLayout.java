@@ -7,46 +7,39 @@ package yhh.com.curvelistview;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.widget.FrameLayout;
 
 public class RoundedCornerLayout extends FrameLayout {
-    private final static float CORNER_RADIUS = 40.0f;
     private boolean mIsTop = false, mIsBottom = false;
     private Bitmap mTopMask, mBottomMask, mTopAndBottomMask;
-    private Paint paint, maskPaint;
-    private float cornerRadius;
+    private Paint mPaint, mMaskPaint;
+    private float mCornerRadius;
 
     public RoundedCornerLayout(Context context) {
-        super(context);
-        init(context, null, 0);
+        this(context, null);
     }
 
     public RoundedCornerLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs, 0);
+        this(context, attrs, 0);
     }
 
     public RoundedCornerLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context, attrs, defStyle);
+        init(context);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyle) {
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        cornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, CORNER_RADIUS, metrics);
+    private void init(Context context) {
+        mCornerRadius = context.getResources().getDimensionPixelSize(R.dimen.rounded_corner_radius);
 
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        maskPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-        maskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+        mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 
         setWillNotDraw(false);
     }
@@ -85,8 +78,8 @@ public class RoundedCornerLayout extends FrameLayout {
 
         super.dispatchDraw(offscreenCanvas);
 
-        offscreenCanvas.drawBitmap(mask, 0f, 0f, maskPaint);
-        canvas.drawBitmap(offscreenBitmap, 0f, 0f, paint);
+        offscreenCanvas.drawBitmap(mask, 0f, 0f, mMaskPaint);
+        canvas.drawBitmap(offscreenBitmap, 0f, 0f, mPaint);
     }
 
     private Bitmap createMask(int width, int height) {
@@ -96,21 +89,20 @@ public class RoundedCornerLayout extends FrameLayout {
             endY = height;
         } else if (mIsTop) {
             startY = 0;
-            endY = height + (int) cornerRadius * 2;
+            endY = height + (int) mCornerRadius;
         } else {
-            startY = -(int) cornerRadius * 2;
+            startY = -(int) mCornerRadius;
             endY = height;
         }
         Bitmap mask = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
         Canvas canvas = new Canvas(mask);
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.WHITE);
 
         canvas.drawRect(0, 0, width, height, paint);
 
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        canvas.drawRoundRect(new RectF(0, startY, width, endY), cornerRadius, cornerRadius, paint);
+        canvas.drawRoundRect(new RectF(0, startY, width, endY), mCornerRadius, mCornerRadius, paint);
 
         return mask;
     }

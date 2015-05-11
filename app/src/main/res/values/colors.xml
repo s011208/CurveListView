@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="listview_press">#8033b5e5</color>
+    <color name="listview_unpress">#00000000</color>
+</resources>

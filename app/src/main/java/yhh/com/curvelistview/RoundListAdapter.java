@@ -59,8 +59,19 @@ public class RoundListAdapter extends BaseAdapter {
         }
         holder.mBg.setImageResource(R.drawable.bg);
         holder.mFg.setImageResource(R.drawable.fg);
-        holder.mRoundView.setTop(position == 0);
-        holder.mRoundView.setBottom(position == getCount() - 1);
+        final boolean isTop = position == 0;
+        final boolean isBottom = position == getCount() - 1;
+        if (isTop && isBottom) {
+            holder.mRoundView.setForeground(mContext.getResources().getDrawable(R.drawable.rounded_corner_top_and_bottom));
+        } else if (isTop) {
+            holder.mRoundView.setForeground(mContext.getResources().getDrawable(R.drawable.rounded_corner_top));
+        } else if (isBottom) {
+            holder.mRoundView.setForeground(mContext.getResources().getDrawable(R.drawable.rounded_corner_bottom));
+        } else {
+            holder.mRoundView.setForeground(mContext.getResources().getDrawable(R.drawable.rounded_corner_normal));
+        }
+        holder.mRoundView.setTop(isTop);
+        holder.mRoundView.setBottom(isBottom);
         return convertView;
     }
 
