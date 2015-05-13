@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
@@ -15,18 +16,25 @@ import android.widget.ListView;
 /**
  * Created by Yen-Hsun_Huang on 2015/5/12.
  */
-public class RoundListView extends ListView{
+public class RoundListView extends ListView {
+    // method 1
     private Paint mPaint, mMaskPaint;
     private float mCornerRadius;
     private Bitmap mMask;
     private Bitmap mOffScreenBitmap;
     private Canvas mOffScreenCanvas;
+
+    // method 2
+    private Path mClipPath;
+
     public RoundListView(Context context) {
         this(context, null);
     }
+
     public RoundListView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
+
     public RoundListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mCornerRadius = context.getResources().getDimensionPixelSize(R.dimen.rounded_corner_radius);
@@ -39,12 +47,11 @@ public class RoundListView extends ListView{
         setWillNotDraw(false);
     }
 
-    @Override
-    public void dispatchDraw(Canvas canvas) {
-        if(mOffScreenBitmap == null) {
+    private void method1(Canvas canvas) {
+        if (mOffScreenBitmap == null) {
             mOffScreenBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
         }
-        if(mOffScreenCanvas == null) {
+        if (mOffScreenCanvas == null) {
             mOffScreenCanvas = new Canvas();
             mOffScreenCanvas.setBitmap(mOffScreenBitmap);
         }
@@ -55,7 +62,7 @@ public class RoundListView extends ListView{
         super.dispatchDraw(mOffScreenCanvas);
         Log.d("QQQQ", "2: " + (System.currentTimeMillis() - time));
         time = System.currentTimeMillis();
-        if(mMask == null) {
+        if (mMask == null) {
             mMask = createMask(canvas.getWidth(), canvas.getHeight());
         }
         mOffScreenCanvas.drawBitmap(mMask, 0f, 0f, mMaskPaint);
@@ -67,6 +74,24 @@ public class RoundListView extends ListView{
 //        long time = System.currentTimeMillis();
 //        super.dispatchDraw(canvas);
 //        Log.i("QQQQ", "time: " + (System.currentTimeMillis() - time));
+    }
+
+    private void method2(Canvas canvas) {
+        final int width = canvas.getWidth();
+        final int height = canvas.getHeight();
+        if (mClipPath == null) {
+            mClipPath = new Path();
+            mClipPath.addRoundRect(new RectF(0, 0, width, height), mCornerRadius, mCornerRadius, Path.Direction.CW);
+        }
+        canvas.save();
+        canvas.clipPath(mClipPath);
+        super.dispatchDraw(canvas);
+        canvas.restore();
+    }
+
+    @Override
+    public void dispatchDraw(Canvas canvas) {
+        method2(canvas);
     }
 
     private Bitmap createMask(int width, int height) {
